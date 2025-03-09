@@ -24,7 +24,7 @@ class EsetRegister(object):
         logging.info('[EMAIL] Register page loading...')
         console_log('\n[EMAIL] Register page loading...', INFO, silent_mode=SILENT_MODE)
         if isinstance(self.email_obj, WEB_WRAPPER_EMAIL_APIS_CLASSES):
-            self.driver.switch_to.new_window('EsetRegister')
+            self.driver.switch_to.new_window('tab')
             self.window_handle = self.driver.current_window_handle
         self.driver.get('https://login.eset.com/Register')
         uCE(self.driver, f"return {GET_EBID}('email') != null")
@@ -228,7 +228,7 @@ class EsetProtectHubRegister(object):
         logging.info('Loading ESET ProtectHub Page...')
         console_log('\nLoading ESET ProtectHub Page...', INFO, silent_mode=SILENT_MODE)
         if isinstance(self.email_obj, WEB_WRAPPER_EMAIL_APIS_CLASSES):
-            self.driver.switch_to.new_window('EsetBusinessRegister')
+            self.driver.switch_to.new_window('tab')
             self.window_handle = self.driver.current_window_handle
         self.driver.get('https://protecthub.eset.com/public/registration?culture=en-US')
         uCE(self.driver, f'return {GET_EBID}("continue") != null')
@@ -448,10 +448,14 @@ class EsetProtectHubKeygen(object):
         try:
             self.driver.execute_script(f'return {GET_EBID}("license-actions-button")').click()
             time.sleep(1)
-            self.driver.execute_script(f'return {GET_EBID}("3-0-action_remove_license")').click()
+            self.driver.execute_script(f'return {GET_EBID}("2-0-action_remove_license")').click()
             untilConditionExecute(self.driver, f'return {CLICK_WITH_BOOL}({GET_EBID}("remove-license-dlg-remove-btn"))', max_iter=15)
-            self.driver.execute_script(f'return {GET_EBID}("remove-license-dlg-remove-btn")').click()
+            time.sleep(2)
             for _ in range(DEFAULT_MAX_ITER//2):
+                try:
+                    self.driver.execute_script(f'return {GET_EBID}("remove-license-dlg-remove-btn")').click()
+                except:
+                    pass
                 if self.driver.page_source.lower().find('to keep the solutions up to date') == -1:
                     time.sleep(1)
                     logging.info('Key successfully deleted!!!')
